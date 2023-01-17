@@ -1,0 +1,3 @@
+# Project Of VCS
+
+The aim of this project is to predict words or phrases from videos. This task can be solved with both machine learning and deep learning techniques (for example, you can use a CNN to extract features from video frames and process extracted features with an RNN). Pre-trained CNNs on human faces could improve classification results. Data augmentation techniques should be applied to increase the number of samples.
