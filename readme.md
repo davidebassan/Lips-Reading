@@ -1,3 +1,5 @@
-# VGG16 Keras Implementation
+# Face Recognition and Data Agumentation
 
-Used only Keras Library and python naive instruction to solve the task of classification
+Using Keras
+[dataset MIRACL-VC1](https://sites.google.com/site/achrafbenhamadou/-datasets/miracl-vc1)
+
