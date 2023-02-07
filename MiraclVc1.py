@@ -10,15 +10,15 @@ class MiraclVc1:
 
     @staticmethod
     def load_dataset(type, global_path="MIRACL-VC1"):
-        #assert type == "words", "type should be words or phrases"
-        #assert type == "phrases", "type should be phrases or words"
+        if type != "words" and type != "phrases":
+            raise ValueError("Type must be words or phrases")
 
         index_person = 1
 
         global_dir = os.listdir(global_path)
         # Entering person folder
         person_obj = []
-        for person in global_dir:
+        for i, person in enumerate(global_dir):
             print("Perform " + person + " " + str(index_person) + "/" + str(len(global_dir)))
             person_path = global_path + "/" + person + "/" + type
             sex = person[0]
@@ -42,13 +42,16 @@ class MiraclVc1:
                     for frame in frames_folder:
                         frame_path = frames_path + "/" + frame
                         frame_img = cv2.imread(frame_path)
-                        frame_x = MiraclVc1.Word.Frame(int(frame[6:8]), frame_path, frame_img, frame[0:4], index_version)
+                        frame_x = MiraclVc1.Word.Frame(str(frame[6:9]), frame_path, frame_img, frame[0:5], index_version)
                         frames_obj.append(frame_x)
                 word_x = MiraclVc1.Word(label, label, frames_obj, words_path)
                 words_obj.append(word_x)
             person_x = MiraclVc1(person, sex, words_obj)
             person_obj.append(person_x)
             index_person += 1
+
+            if i > 0:
+                break
         return person_obj
 
     class Word:
