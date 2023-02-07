@@ -11,8 +11,8 @@ def get_mouth(img, face_cascade_path='cascade_files/haarcascade_frontalface_defa
     :img cv2 image
     @returns: json coords of rectangle containing the face and the mouth {face: ..., mouth: ...,}
     """
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-    mouth_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_mcs_mouth.xml')
+    face_cascade = cv2.CascadeClassifier(face_cascade_path)
+    mouth_cascade = cv2.CascadeClassifier(mouth_cascade_path)
 
     if mouth_cascade.empty():
         raise IOError('Unable to load the mouth cascade classifier xml file')
@@ -34,6 +34,6 @@ def get_mouth(img, face_cascade_path='cascade_files/haarcascade_frontalface_defa
             my = int(my - 0.25 * mh)
             roi_gray_mouth = gray[my:my + mh, mx:mx + mw]
             #cv2.rectangle(gray, (x + mx, y + my), (x + mx + mw, y + my + mw), (255, 0, 0), 2)
-            #plt.imshow(roi_gray, cmap='gray')
+            plt.imshow(roi_gray, cmap='gray')
 
-    return roi_gray_mouth
+            return roi_gray, roi_gray_mouth
