@@ -9,7 +9,7 @@ def get_mouth(img, face_cascade_path='cascade_files/haarcascade_frontalface_defa
               mouth_cascade_path='cascade_files/haarcascade_mcs_mouth.xml'):
     """
     :img cv2 image
-    @returns: json coords of rectangle containing the face and the mouth {face: ..., mouth: ...,}
+    @returns: tuple of cv2 images
     """
     face_cascade = cv2.CascadeClassifier(face_cascade_path)
     mouth_cascade = cv2.CascadeClassifier(mouth_cascade_path)
