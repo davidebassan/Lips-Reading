@@ -10,7 +10,8 @@ class MiraclVc1:
 
     @staticmethod
     def load_dataset(type, global_path="MIRACL-VC1"):
-        assert type == "word" or type == "phrases"
+        #assert type == "words", "type should be words or phrases"
+        #assert type == "phrases", "type should be phrases or words"
 
         index_person = 1
 
