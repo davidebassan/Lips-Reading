@@ -1,3 +1,6 @@
 keras
-numpy
-opencv-python
+numpy~=1.21.0
+opencv-python~=4.7.0.68
+dlib~=19.24.0
+tqdm
+matplotlib~=3.4.2

@@ -5,35 +5,71 @@ import cv2
 from matplotlib import pyplot as plt
 
 
-def get_mouth(img, face_cascade_path='cascade_files/haarcascade_frontalface_default.xml',
+def get_mouth_old(img_path, face_cascade_path='cascade_files/haarcascade_frontalface_default.xml',
               mouth_cascade_path='cascade_files/haarcascade_mcs_mouth.xml'):
-    """
-    :img cv2 image
-    @returns: tuple of cv2 images
-    """
+
     face_cascade = cv2.CascadeClassifier(face_cascade_path)
     mouth_cascade = cv2.CascadeClassifier(mouth_cascade_path)
 
     if mouth_cascade.empty():
         raise IOError('Unable to load the mouth cascade classifier xml file')
 
-    #img_path = "MIRACL-VC1/F01/words/01/01/color_001.jpg"
-    #img = cv2.imread(img_path)
+    img = cv2.imread(img_path)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # plt.imshow(gray, cmap='gray')
+    plt.imshow(gray, cmap='gray')
 
     # Detect face
-    face_rects = face_cascade.detectMultiScale(gray, 1.1, 3)
+    faces = face_cascade.detectMultiScale(gray, 1.1, 5)
 
-    for (x, y, w, h) in face_rects:
+    for (x, y, w, h) in faces:
+        roi_color = img[y:y + h, x:x + w]
         roi_gray = gray[y:y + h, x:x + w]
-        # plt.imshow(roi_gray, cmap='gray')
-        mouth_rects = mouth_cascade.detectMultiScale(roi_gray, 1.4, 9)
-        #cv2.rectangle(gray, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        for (mx, my, mw, mh) in mouth_rects:
-            my = int(my - 0.25 * mh)
-            roi_gray_mouth = gray[my:my + mh, mx:mx + mw]
-            #cv2.rectangle(gray, (x + mx, y + my), (x + mx + mw, y + my + mw), (255, 0, 0), 2)
-            plt.imshow(roi_gray, cmap='gray')
+        lips = mouth_cascade.detectMultiScale(roi_gray, 1.4, 4)
 
-            return roi_gray, roi_gray_mouth
+        for (lx, ly, lw, lh) in lips:
+            # my = int(ly - 0.25 * lh)
+            lip_cropped = roi_color[ly:ly + lh, lx:lx + lw]
+            # cv2.rectangle(gray, (x + mx, y + my), (x + mx + mw, y + my + mw), (255, 0, 0), 2)
+            return lip_cropped
+
+
+def get_mouth(img_path):
+    import cv2
+    import dlib
+    import numpy as np
+
+    # Carica il modello di rilevamento facciale
+    face_detector = dlib.get_frontal_face_detector()
+
+    # Carica il modello di predizione delle coordinate delle labbra
+    p = "cascade_files/shape_predictor_68_face_landmarks.dat"
+    lip_predictor = dlib.shape_predictor(p)
+    img = cv2.imread(img_path)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Converti l'immagine in scala di grigi
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Rileva le facce nell'immagine
+    faces = face_detector(gray)
+
+    # Loop sulle facce rilevate
+    for face in faces:
+        x, y, w, h = face.left(), face.top(), face.width(), face.height()
+        rect = dlib.rectangle(x, y, x + w, y + h)
+
+        # Trova le coordinate delle labbra
+        shape = lip_predictor(gray, rect)
+        lip_points = []
+        for i in range(48, 61):
+            lip_points.append([shape.part(i).x, shape.part(i).y])
+
+        # Trova i valori massimi e minimi per x e y
+        x_min = int(min([p[0] for p in lip_points]))
+        x_max = int(max([p[0] for p in lip_points]))
+        y_min = int(min([p[1] for p in lip_points]))
+        y_max = int(max([p[1] for p in lip_points]))
+
+        # Ritaglia la bocca
+        lip_cropped = img[y_min:y_max, x_min:x_max]
+        return lip_cropped
